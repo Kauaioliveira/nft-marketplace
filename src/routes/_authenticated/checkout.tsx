@@ -92,11 +92,12 @@ function CheckoutForm({ user, wallets }: { user: User; wallets: Wallet[] | undef
   const values = form.watch()
   const provider = values.walletProvider
 
+  const [walletError, setWalletError] = useState<string | null>(null)
+
   const openReview = form.handleSubmit(async (data) => {
+    setWalletError(null)
     if (!connected.includes(data.walletProvider as WalletProvider)) {
-      form.setError('walletProvider', {
-        message: 'Conecte a carteira selecionada antes de revisar o pedido.',
-      })
+      setWalletError('Conecte a carteira selecionada antes de revisar o pedido.')
       return
     }
     try {
@@ -201,7 +202,7 @@ function CheckoutForm({ user, wallets }: { user: User; wallets: Wallet[] | undef
               onChange={(next) =>
                 form.setValue('walletProvider', next, { shouldValidate: true, shouldDirty: true })
               }
-              error={form.formState.errors.walletProvider?.message}
+              error={form.formState.errors.walletProvider?.message ?? walletError ?? undefined}
             />
 
             {order.quoteMutation.isError && (
