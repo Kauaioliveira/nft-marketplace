@@ -1,8 +1,11 @@
 import type { QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 import { lazy, Suspense } from 'react'
+import { MobileNav } from '@/components/mobile-nav'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
+import { Toaster } from '@/components/ui/sonner'
+import { SessionExpiryWatcher } from '@/features/session/session-expiry-watcher'
 
 type RouterContext = { queryClient: QueryClient }
 
@@ -18,7 +21,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootLayout() {
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col pb-20 md:pb-0">
       <a
         href="#conteudo"
         className="focus:bg-brand focus:text-ink sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:px-3 focus:py-2"
@@ -30,6 +33,9 @@ function RootLayout() {
         <Outlet />
       </main>
       <SiteFooter />
+      <MobileNav />
+      <SessionExpiryWatcher />
+      <Toaster position="top-center" />
       {DevPanel && (
         <Suspense fallback={null}>
           <DevPanel />

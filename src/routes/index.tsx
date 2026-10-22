@@ -1,44 +1,43 @@
-import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
+import { useCallback } from 'react'
 import { nftListQuery } from '@/api/nfts'
-import { PagePlaceholder } from '@/components/page-placeholder'
-import { formatEth } from '@/lib/money'
+import { CatalogSection } from '@/features/catalog/catalog-section'
+import { HomeEditorial } from '@/features/catalog/home-editorial'
+import { HomeHero } from '@/features/catalog/home-hero'
+import { catalogSearchSchema, toListParams, type CatalogSearch } from '@/features/catalog/search'
 
 export const Route = createFileRoute('/')({
+  validateSearch: catalogSearchSchema,
+  loaderDeps: ({ search }) => toListParams(search),
+  // Starts the request during navigation; the component reads the same cache entry.
+  loader: ({ context, deps }) => {
+    void context.queryClient.prefetchQuery(nftListQuery(deps))
+  },
   component: HomePage,
 })
 
 function HomePage() {
-  const { data, isPending, isError, refetch } = useQuery(nftListQuery({ page: 1, pageSize: 12 }))
+  const search = Route.useSearch()
+  const navigate = Route.useNavigate()
+
+  const onSearchChange = useCallback(
+    (patch: Partial<CatalogSearch>) => {
+      void navigate({
+        search: (previous) => ({ ...previous, ...patch }),
+        // Keeps the catalog in view instead of jumping to the top on each filter change.
+        resetScroll: false,
+      })
+    },
+    [navigate],
+  )
 
   return (
-    <PagePlaceholder title="Catálogo">
-      {isPending && <p className="text-sand mt-4">Carregando NFTs…</p>}
-      {isError && (
-        <p className="text-sand mt-4">
-          Não foi possível carregar o catálogo.{' '}
-          <button className="underline" onClick={() => void refetch()}>
-            Tentar novamente
-          </button>
-        </p>
-      )}
-      {data && (
-        <>
-          <p className="text-sand mt-2 text-sm">{data.total} NFTs encontrados</p>
-          <ul className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4" aria-label="NFTs">
-            {data.items.map((nft) => (
-              <li key={nft.id} className="bg-surface-card rounded-lg p-4">
-                <Link to="/nfts/$nftId" params={{ nftId: nft.id }} className="font-bold">
-                  {nft.name}
-                </Link>
-                <p className="text-accent-text text-sm" data-testid={`price-${nft.id}`}>
-                  {formatEth(nft.priceEth)}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-    </PagePlaceholder>
+    <>
+      <HomeHero />
+      <div className="mt-16 md:mt-24">
+        <CatalogSection search={search} onSearchChange={onSearchChange} />
+      </div>
+      <HomeEditorial />
+    </>
   )
 }
