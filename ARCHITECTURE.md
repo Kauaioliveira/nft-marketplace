@@ -199,6 +199,13 @@ para a medição, como pede o enunciado.
 
 ## Decisões e desvios
 
+- **URL do catálogo legível**: o serializador padrão do TanStack Router grava JSON
+  (`?category=["music"]&minPrice="0.5"`). `lib/search-params.ts` grava `?category=music,art&minPrice=0.5`; o
+  schema zod da rota continua validando tudo que volta da URL.
+- **Facetas**: a contagem de cada opção considera os outros filtros ativos (quantos resultados ela traria).
+  Opção com zero resultados fica desabilitada, a não ser que já esteja marcada; "Limpar filtros" aparece
+  sempre que há filtro, busca ou aba ativa.
+
 - **Login e cadastro como página**: no Figma são modais sobre a home. Viraram páginas com o mesmo cartão para
   ter URL própria, que a guarda de rotas usa no redirect e que sobrevive ao refresh.
 - **Faixa de preço** com dois campos (mínimo e máximo) e botão Aplicar, em vez do slider do layout:

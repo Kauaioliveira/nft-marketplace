@@ -79,4 +79,35 @@ test.describe('catálogo', () => {
     await start(page, 'default', '/nfts/nft-5')
     await expect(page.getByRole('radio', { name: /^1\/1 / })).toBeDisabled()
   })
+
+  test('filtros combinados no painel (drawer no mobile): URL legível, opção sem resultado e limpar', async ({
+    page,
+  }) => {
+    await start(page)
+    const results = page.getByRole('list', { name: 'NFTs' })
+    const isDesktop = (page.viewportSize()?.width ?? 0) >= 1024
+    if (!isDesktop) await page.getByRole('button', { name: /^Filtros/ }).click()
+    // On mobile the filters live in the drawer; the visible copy is the one to use.
+    const panel = isDesktop
+      ? page.getByRole('complementary', { name: 'Filtros do catálogo' })
+      : page.getByRole('dialog')
+
+    await panel.getByRole('checkbox', { name: /Música/ }).check()
+    await panel.getByLabel('Preço mínimo em ETH').fill('0,5')
+    await panel.getByLabel('Preço máximo em ETH').fill('2')
+    await panel.getByRole('button', { name: 'Aplicar' }).click()
+    await expect(page).toHaveURL(/[?&]category=music(&|$)/)
+    await expect(page).toHaveURL(/minPrice=0\.5/)
+    await expect(page).toHaveURL(/maxPrice=2(&|$)/)
+
+    // Music between 0.5 and 2 ETH only exists on Polygon, so Ethereum has nothing to add.
+    await expect(panel.getByRole('checkbox', { name: /Ethereum/ })).toBeDisabled()
+    if (!isDesktop) await page.keyboard.press('Escape')
+    await expect(page.getByText('1 NFT encontrado')).toBeVisible()
+    await expect(results.getByRole('link', { name: 'Golden Beat #207' })).toBeVisible()
+
+    await page.getByRole('button', { name: 'Limpar filtros' }).click()
+    await expect(page.getByText('40 NFTs encontrados')).toBeVisible()
+    await expect(page).not.toHaveURL(/category=/)
+  })
 })
