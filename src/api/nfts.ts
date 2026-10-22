@@ -16,7 +16,11 @@ export function nftListQuery(params: NftListParams) {
     // The signal lets TanStack Query cancel a request when the params change mid-flight.
     queryFn: async ({ signal }) => {
       const { data } = await http.get('/nfts', {
-        params: { ...params, category: params.category?.join(',') || undefined },
+        params: {
+          ...params,
+          category: params.category?.join(',') || undefined,
+          network: params.network?.join(',') || undefined,
+        },
         signal,
       })
       return parseResponse(nftListSchema, data)

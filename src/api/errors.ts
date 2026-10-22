@@ -19,6 +19,7 @@ export const errorBodySchema = z.object({
     code: z.enum(apiErrorCodes),
     message: z.string(),
     fields: z.record(z.string(), z.string()).optional(),
+    details: z.unknown().optional(),
   }),
 })
 
@@ -28,18 +29,21 @@ export class ApiError extends Error {
   readonly code: ErrorCode
   readonly status: number | null
   readonly fields: Record<string, string> | undefined
+  readonly details: unknown
 
   constructor(
     code: ErrorCode,
     message: string,
     status: number | null = null,
     fields?: Record<string, string>,
+    details?: unknown,
   ) {
     super(message)
     this.name = 'ApiError'
     this.code = code
     this.status = status
     this.fields = fields
+    this.details = details
   }
 
   /** Only failures that may succeed on a second try. 4xx answers are final. */
@@ -60,8 +64,8 @@ export function toApiError(error: unknown): ApiError {
     }
     const parsed = errorBodySchema.safeParse(error.response.data)
     if (parsed.success) {
-      const { code, message, fields } = parsed.data.error
-      return new ApiError(code, message, error.response.status, fields)
+      const { code, message, fields, details } = parsed.data.error
+      return new ApiError(code, message, error.response.status, fields, details)
     }
     return new ApiError('UNKNOWN', 'Resposta inesperada do servidor.', error.response.status)
   }

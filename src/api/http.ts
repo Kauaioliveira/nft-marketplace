@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { toApiError } from './errors'
 import { sessionToken } from './session-token'
+import { visitorCart } from './visitor-cart'
 
 export const http = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
@@ -14,12 +15,19 @@ const unauthorizedListeners = new Set<UnauthorizedListener>()
 /** Lets the session layer react to an expired token without the HTTP client knowing about React. */
 export function onUnauthorized(listener: UnauthorizedListener) {
   unauthorizedListeners.add(listener)
-  return () => unauthorizedListeners.delete(listener)
+  return () => {
+    unauthorizedListeners.delete(listener)
+  }
 }
 
 http.interceptors.request.use((config) => {
   const token = sessionToken.get()
-  if (token) config.headers.set('Authorization', `Bearer ${token}`)
+  if (token) {
+    config.headers.set('Authorization', `Bearer ${token}`)
+  } else {
+    const cartId = visitorCart.get()
+    if (cartId) config.headers.set('X-Cart-Id', cartId)
+  }
   return config
 })
 
