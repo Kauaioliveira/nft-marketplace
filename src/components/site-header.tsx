@@ -144,12 +144,22 @@ function AccountButton() {
         onClick={() => setOpen((value) => !value)}
         className="bg-brand text-ink hover:bg-brand-light flex items-center gap-2 rounded-md px-3 py-1.5"
       >
-        <span
-          aria-hidden
-          className="bg-ink text-brand grid size-6 place-items-center rounded-full text-xs"
-        >
-          {initials}
-        </span>
+        {user.avatar ? (
+          <img
+            src={user.avatar}
+            alt=""
+            width={24}
+            height={24}
+            className="size-6 rounded-full object-cover"
+          />
+        ) : (
+          <span
+            aria-hidden
+            className="bg-ink text-brand grid size-6 place-items-center rounded-full text-xs"
+          >
+            {initials}
+          </span>
+        )}
         <span className="hidden max-w-32 truncate sm:inline">{user.name}</span>
         <span className="sr-only sm:hidden">Conta de {user.name}</span>
       </button>

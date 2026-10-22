@@ -13,7 +13,8 @@ import {
   type Wallet,
   type WalletProvider,
 } from '@/api/contracts'
-import { FormField, inputClass } from '@/components/form-field'
+import { FormField } from '@/components/form-field'
+import { SelectField } from '@/components/select-field'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { SummaryRows, SummarySkeleton } from '@/features/cart/cart-summary'
@@ -34,7 +35,6 @@ import { WalletConnection } from '@/features/checkout/wallet-connection'
 import { useSession } from '@/features/session/use-session'
 import { networkLabels, walletProviderLabels } from '@/lib/labels'
 import { formatEth } from '@/lib/money'
-import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/_authenticated/checkout')({
   component: CheckoutPage,
@@ -350,43 +350,6 @@ function CollectorFields({ form }: { form: UseFormReturn<CheckoutValues> }) {
         )}
       </div>
     </fieldset>
-  )
-}
-
-type SelectFieldProps = React.SelectHTMLAttributes<HTMLSelectElement> & {
-  label: string
-  error?: string
-  required?: boolean
-}
-
-function SelectField({ label, error, required, children, ...props }: SelectFieldProps) {
-  const id = `select-${props.name}`
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-[15px]">
-        {label}
-        {required && (
-          <span className="text-coral" aria-hidden>
-            *
-          </span>
-        )}
-      </label>
-      <select
-        id={id}
-        aria-invalid={Boolean(error)}
-        aria-required={required}
-        aria-describedby={error ? `${id}-error` : undefined}
-        className={cn(inputClass, 'bg-ink')}
-        {...props}
-      >
-        {children}
-      </select>
-      {error && (
-        <p id={`${id}-error`} className="text-coral text-sm">
-          {error}
-        </p>
-      )}
-    </div>
   )
 }
 
