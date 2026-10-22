@@ -20,7 +20,7 @@ Requisitos: **Node 22.19 ou mais recente** (desenvolvido com Node 24, versão em
 ```bash
 nvm install && nvm use   # ou instale o Node 24 LTS pelo site oficial
 corepack enable          # ativa o pnpm na versão do packageManager
-pnpm install
+pnpm install             # npm install também funciona (ver .npmrc)
 pnpm dev                 # http://localhost:5173 com os mocks ativos
 ```
 
