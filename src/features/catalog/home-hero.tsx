@@ -52,9 +52,10 @@ export function HomeHero() {
                 aria-label={`Mostrar destaque ${index + 1}`}
                 aria-pressed={index === active}
                 onClick={() => setActive(index)}
+                // 24px hit area around the 12px dot (minimum touch target).
                 className={cn(
-                  'bg-brand size-3 rounded-full transition',
-                  index !== active && 'opacity-50',
+                  'before:bg-brand grid size-6 place-items-center before:size-3 before:rounded-full before:transition before:content-[""]',
+                  index !== active && 'before:opacity-50',
                 )}
               />
             ))}
