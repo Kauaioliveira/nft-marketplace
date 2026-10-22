@@ -12,8 +12,7 @@ test.describe('smoke', () => {
     await expect(page.getByRole('heading', { name: 'Página não encontrada' })).toBeVisible()
   })
 
-  // Pending: the socket connection is not intercepted by MSW yet (see README).
-  test.fixme('receives a price change through Socket.IO', async ({ page }) => {
+  test('receives a price change through Socket.IO', async ({ page }) => {
     await page.goto('/?scenario=default')
     await expect(page.getByRole('list', { name: 'NFTs' }).getByRole('listitem')).toHaveCount(12)
     await expect(page.getByTestId('price-nft-40')).toHaveText('3.1 ETH')

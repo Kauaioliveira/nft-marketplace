@@ -1,11 +1,13 @@
 import { toSocketIo } from '@mswjs/socket.io-binding'
 import { ws } from 'msw'
 import type { Nft, RealtimeEvent } from '@/api/contracts'
+import { SOCKET_URL } from '@/realtime/config'
 
 type SocketIoServer = ReturnType<typeof toSocketIo>
 
 // MSW intercepts WebSocket only, so the client must use the `websocket` transport (no polling).
-const socketLink = ws.link(/\/socket\.io\//)
+// MSW strips the `/socket.io/` path before matching, so the link is the bare server address.
+const socketLink = ws.link(SOCKET_URL)
 
 const connections = new Set<SocketIoServer>()
 
