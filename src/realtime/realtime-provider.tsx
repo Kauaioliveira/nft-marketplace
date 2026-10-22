@@ -14,9 +14,9 @@ import { nftKeys } from '@/api/nfts'
 import { useAnnounce } from '@/components/live-announcer-context'
 import { useSession } from '@/features/session/use-session'
 import { formatEth } from '@/lib/money'
+import { mocksReady } from '@/api/mocks-ready'
 import { createEventGuard } from './event-guard'
 import { notifyNftChanged } from './nft-changes'
-import { createSocket } from './socket'
 
 /** Writes the event payload only if it is newer than what the cache holds. */
 function applyNft(queryClient: QueryClient, nft: Nft) {
@@ -55,58 +55,73 @@ export function RealtimeProvider({ children }: { children: ReactNode }) {
   const userId = session?.user.id ?? null
 
   useEffect(() => {
-    const socket = createSocket()
-    const guard = createEventGuard()
-    let hasConnectedBefore = false
+    let disposed = false
+    let cleanup = () => {}
 
-    socket.on('connect', () => {
-      if (token) socket.emit('session.join', token)
-      if (hasConnectedBefore) {
-        void queryClient.invalidateQueries({ refetchType: 'active' })
-      }
-      hasConnectedBefore = true
-    })
+    // socket.io-client is loaded only after the mock worker is up: engine.io-client keeps a
+    // reference to the global WebSocket when its module is evaluated, and MSW patches it on start.
+    void mocksReady
+      .then(() => import('./socket'))
+      .then(({ createSocket }) => {
+        if (disposed) return
+        const socket = createSocket()
+        const guard = createEventGuard()
+        let hasConnectedBefore = false
 
-    socket.on('nft.updated', (raw: unknown) => {
-      const parsed = nftUpdatedEventSchema.safeParse(raw)
-      if (!parsed.success || !guard.accept(parsed.data)) return
-      const nft = parsed.data.payload
-      const inCart = cartContains(queryClient, nft.id)
-      applyNft(queryClient, nft)
-      notifyNftChanged(nft)
-      if (inCart) {
-        // Cart totals come from the API, so the cart is refetched instead of patched locally.
-        void queryClient.invalidateQueries({ queryKey: ['cart'] })
-        const edition = nft.editions.find((item) => item.id === inCart.editionId)
-        announce(
-          edition && edition.available < inCart.quantity
-            ? `${nft.name} (${inCart.editionLabel}) ficou indisponível na quantidade do seu carrinho.`
-            : `O preço de ${nft.name} no seu carrinho mudou para ${formatEth(edition?.priceEth ?? nft.priceEth)}.`,
-        )
-      } else {
-        announce(`${nft.name} foi atualizado.`)
-      }
-    })
+        socket.on('connect', () => {
+          if (token) socket.emit('session.join', token)
+          if (hasConnectedBefore) {
+            void queryClient.invalidateQueries({ refetchType: 'active' })
+          }
+          hasConnectedBefore = true
+        })
 
-    socket.on('order.updated', (raw: unknown) => {
-      const parsed = orderUpdatedEventSchema.safeParse(raw)
-      // Events of another session are ignored even if one reaches this socket.
-      if (!parsed.success || !userId || parsed.data.userId !== userId) return
-      if (!guard.accept(parsed.data)) return
-      const order = parsed.data.payload
-      queryClient.setQueryData<Order>(checkoutKeys.order(userId, order.id), (current) =>
-        !current || current.version < order.version ? order : current,
-      )
-      if (order.status !== 'pending') {
-        void queryClient.invalidateQueries({ queryKey: cartKeys.current(userId) })
-        announce(order.status === 'confirmed' ? 'Pagamento confirmado.' : 'Pagamento recusado.')
-      }
-    })
+        socket.on('nft.updated', (raw: unknown) => {
+          const parsed = nftUpdatedEventSchema.safeParse(raw)
+          if (!parsed.success || !guard.accept(parsed.data)) return
+          const nft = parsed.data.payload
+          const inCart = cartContains(queryClient, nft.id)
+          applyNft(queryClient, nft)
+          notifyNftChanged(nft)
+          if (inCart) {
+            // Cart totals come from the API, so the cart is refetched instead of patched locally.
+            void queryClient.invalidateQueries({ queryKey: ['cart'] })
+            const edition = nft.editions.find((item) => item.id === inCart.editionId)
+            announce(
+              edition && edition.available < inCart.quantity
+                ? `${nft.name} (${inCart.editionLabel}) ficou indisponível na quantidade do seu carrinho.`
+                : `O preço de ${nft.name} no seu carrinho mudou para ${formatEth(edition?.priceEth ?? nft.priceEth)}.`,
+            )
+          } else {
+            announce(`${nft.name} foi atualizado.`)
+          }
+        })
 
-    socket.connect()
+        socket.on('order.updated', (raw: unknown) => {
+          const parsed = orderUpdatedEventSchema.safeParse(raw)
+          // Events of another session are ignored even if one reaches this socket.
+          if (!parsed.success || !userId || parsed.data.userId !== userId) return
+          if (!guard.accept(parsed.data)) return
+          const order = parsed.data.payload
+          queryClient.setQueryData<Order>(checkoutKeys.order(userId, order.id), (current) =>
+            !current || current.version < order.version ? order : current,
+          )
+          if (order.status !== 'pending') {
+            void queryClient.invalidateQueries({ queryKey: cartKeys.current(userId) })
+            announce(order.status === 'confirmed' ? 'Pagamento confirmado.' : 'Pagamento recusado.')
+          }
+        })
+
+        socket.connect()
+        cleanup = () => {
+          socket.removeAllListeners()
+          socket.disconnect()
+        }
+      })
+
     return () => {
-      socket.removeAllListeners()
-      socket.disconnect()
+      disposed = true
+      cleanup()
     }
   }, [queryClient, announce, token, userId])
 

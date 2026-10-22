@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { toApiError } from './errors'
+import { mocksReady } from './mocks-ready'
 import { sessionToken } from './session-token'
 import { visitorCart } from './visitor-cart'
 
@@ -20,7 +21,9 @@ export function onUnauthorized(listener: UnauthorizedListener) {
   }
 }
 
-http.interceptors.request.use((config) => {
+http.interceptors.request.use(async (config) => {
+  // In demo mode the API only exists once the mock worker is active.
+  await mocksReady
   const token = sessionToken.get()
   if (token) {
     config.headers.set('Authorization', `Bearer ${token}`)
