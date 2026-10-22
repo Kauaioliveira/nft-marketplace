@@ -2,8 +2,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import { useForm, type UseFormReturn } from 'react-hook-form'
-import { walletsQuery } from '@/api/checkout'
+import { useForm, useWatch, type UseFormReturn } from 'react-hook-form'
+import { walletConnectionsQuery, walletsQuery } from '@/api/checkout'
 import {
   networks,
   walletProviders,
@@ -30,7 +30,7 @@ import {
   type PendingAttempt,
 } from '@/features/checkout/checkout-storage'
 import { usePlaceOrder } from '@/features/checkout/use-place-order'
-import { useWalletConnections, WalletConnection } from '@/features/checkout/wallet-connection'
+import { WalletConnection } from '@/features/checkout/wallet-connection'
 import { useSession } from '@/features/session/use-session'
 import { networkLabels, walletProviderLabels } from '@/lib/labels'
 import { formatEth } from '@/lib/money'
@@ -71,7 +71,7 @@ function CheckoutPage() {
 
 function CheckoutForm({ user, wallets }: { user: User; wallets: Wallet[] | undefined }) {
   const { data: cart, isPending: cartPending } = useCart()
-  const { data: connected = [] } = useWalletConnections(user.id)
+  const { data: connected = [] } = useQuery(walletConnectionsQuery(user.id))
   const order = usePlaceOrder(user.id)
   const [reviewOpen, setReviewOpen] = useState(false)
   const [pendingAttempt, setPendingAttempt] = useState<PendingAttempt | null>(() => {
@@ -85,12 +85,14 @@ function CheckoutForm({ user, wallets }: { user: User; wallets: Wallet[] | undef
 
   // The draft survives a refresh or an expired session, so the user can pick up where they stopped.
   useEffect(() => {
-    const subscription = form.watch((values) => saveCheckoutDraft(values))
-    return () => subscription.unsubscribe()
+    return form.subscribe({
+      formState: { values: true },
+      callback: ({ values }) => saveCheckoutDraft(values),
+    })
   }, [form])
 
-  const values = form.watch()
-  const provider = values.walletProvider
+  const values = useWatch({ control: form.control })
+  const provider = values.walletProvider ?? ''
 
   const [walletError, setWalletError] = useState<string | null>(null)
 
@@ -236,7 +238,7 @@ function CheckoutForm({ user, wallets }: { user: User; wallets: Wallet[] | undef
         }}
         order={order}
         walletLabel={provider ? walletProviderLabels[provider as WalletProvider] : ''}
-        address={values.walletAddress}
+        address={values.walletAddress ?? ''}
         onConfirm={confirm}
       />
     </div>

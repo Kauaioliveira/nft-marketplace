@@ -19,15 +19,11 @@ type WalletConnectionProps = {
   error?: string
 }
 
-export function useWalletConnections(userId: string) {
-  return useQuery(walletConnectionsQuery(userId))
-}
-
 /** "Carteira e rede" block: choose a provider and simulate connect, refusal and disconnect. */
 export function WalletConnection({ userId, value, onChange, error }: WalletConnectionProps) {
   const queryClient = useQueryClient()
   const announce = useAnnounce()
-  const { data: connected = [] } = useWalletConnections(userId)
+  const { data: connected = [] } = useQuery(walletConnectionsQuery(userId))
   const key = checkoutKeys.connections(userId)
 
   const connect = useMutation({
