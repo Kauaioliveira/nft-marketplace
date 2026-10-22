@@ -104,6 +104,12 @@ export const userSchema = z.object({
 })
 export type User = z.infer<typeof userSchema>
 
+export const profileSchema = userSchema.extend({
+  ensName: z.string(),
+  walletNickname: z.string(),
+})
+export type Profile = z.infer<typeof profileSchema>
+
 export const sessionSchema = z.object({
   token: z.string(),
   expiresAt: z.string(),

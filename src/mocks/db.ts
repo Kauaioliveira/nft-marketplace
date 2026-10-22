@@ -6,7 +6,7 @@ import { createUserFixtures, type UserRecord } from './fixtures/users'
 import { createWalletFixtures } from './fixtures/wallets'
 
 const STORAGE_KEY = 'kurio.mock-db'
-const SCHEMA_VERSION = 2
+const SCHEMA_VERSION = 3
 
 export type SessionRecord = { userId: string; expiresAt: string }
 

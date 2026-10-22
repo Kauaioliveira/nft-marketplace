@@ -80,6 +80,8 @@ export const authHandlers = [
       username,
       email,
       avatar: null,
+      ensName: '',
+      walletNickname: '',
       salt,
       passwordHash: await sha256(`${salt}:${password}`),
     }
