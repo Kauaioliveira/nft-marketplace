@@ -1,104 +1,223 @@
 import Big from 'big.js'
-import type { Edition, Nft, NftCategory } from '@/api/contracts'
+import type { Edition, Network, Nft, NftCategory } from '@/api/contracts'
 
-const names = [
-  'Macaco Explorador',
-  'Guardião Dourado',
-  'Sonho de Neon',
-  'Primata Zen',
-  'Rei da Selva',
-  'Capitão Cacau',
-  'Eco Tropical',
-  'Mestre do Tempo',
-  'Viajante Lunar',
-  'Coroa de Âmbar',
-  'Silêncio Verde',
-  'Pixel Ancestral',
-  'Batida Selvagem',
-  'Retrato Noturno',
-  'Folha Digital',
-  'Olhar de Cobre',
-  'Raiz Eterna',
-  'Sinfonia Ocre',
-  'Arena Perdida',
-  'Mapa do Tesouro',
-  'Chama Antiga',
-  'Ritmo da Mata',
-  'Bruma Dourada',
-  'Totem Moderno',
-  'Lenda Urbana',
-  'Galho Cósmico',
-  'Fruto Proibido',
-  'Trilha Sonora',
-  'Horizonte Cobre',
-  'Espírito Livre',
-  'Máscara Ritual',
-  'Cripta Âmbar',
-  'Brilho Fóssil',
-  'Vulto da Mata',
-  'Selo Real',
-  'Neblina Ocre',
-  'Cântico Antigo',
-  'Fera Gentil',
-  'Último Guardião',
-  'Semente Rara',
+type ArtKey = 'glasses' | 'bucket-hat' | 'turtleneck' | 'headphones'
+
+type Seed = {
+  name: string
+  number: string
+  price: string
+  compareAt?: string
+  art: ArtKey
+  category: NftCategory
+  network: Network
+  rare?: boolean
+  trending?: boolean
+}
+
+// The first eight entries mirror the cards drawn in the Figma file.
+const seeds: Seed[] = [
+  {
+    name: 'Emerald Ape',
+    number: '042',
+    price: '1.19',
+    art: 'glasses',
+    category: 'digital-art',
+    network: 'ethereum',
+    trending: true,
+  },
+  {
+    name: 'Sage Nomad',
+    number: '009',
+    price: '1.69',
+    art: 'turtleneck',
+    category: 'digital-art',
+    network: 'ethereum',
+  },
+  {
+    name: 'Neon Vessel',
+    number: '552',
+    price: '1.99',
+    compareAt: '2.29',
+    art: 'glasses',
+    category: 'collectibles',
+    network: 'polygon',
+    rare: true,
+    trending: true,
+  },
+  {
+    name: 'Cosmic Bloom',
+    number: '118',
+    price: '1.29',
+    art: 'bucket-hat',
+    category: 'generative',
+    network: 'ethereum',
+  },
+  {
+    name: 'Violet Nomad',
+    number: '314',
+    price: '1.39',
+    art: 'bucket-hat',
+    category: 'photography',
+    network: 'solana',
+  },
+  {
+    name: 'Ivory Baron',
+    number: '088',
+    price: '1.79',
+    art: 'turtleneck',
+    category: '3d',
+    network: 'ethereum',
+    rare: true,
+  },
+  {
+    name: 'Golden Beat',
+    number: '207',
+    price: '0.99',
+    art: 'headphones',
+    category: 'music',
+    network: 'polygon',
+    trending: true,
+  },
+  {
+    name: 'Golden Signal',
+    number: '160',
+    price: '0.39',
+    art: 'headphones',
+    category: 'music',
+    network: 'solana',
+  },
 ]
 
-const collections = ['Kurio Apes', 'Jungle Club', 'Amber Relics', 'Neon Canopy']
-const creators = [
-  { name: 'Lia Ferraz', avatar: '/assets/avatars/creator-1.svg' },
-  { name: 'Davi Monteiro', avatar: '/assets/avatars/creator-2.svg' },
-  { name: 'Iara Lopes', avatar: '/assets/avatars/creator-3.svg' },
+const adjectives = [
+  'Amber',
+  'Velvet',
+  'Copper',
+  'Jade',
+  'Rustic',
+  'Lunar',
+  'Solar',
+  'Mossy',
+  'Ochre',
+  'Crimson',
+  'Silent',
+  'Wild',
+  'Royal',
+  'Misty',
+  'Ancient',
+  'Urban',
 ]
-const categories: NftCategory[] = ['art', 'collectibles', 'gaming', 'music', 'photography', 'pfp']
+const nouns = [
+  'Ape',
+  'Nomad',
+  'Baron',
+  'Beat',
+  'Signal',
+  'Vessel',
+  'Bloom',
+  'Monk',
+  'Scout',
+  'Keeper',
+  'Rider',
+  'Oracle',
+]
+const arts: ArtKey[] = ['glasses', 'bucket-hat', 'turtleneck', 'headphones']
+const categories: NftCategory[] = [
+  'digital-art',
+  'photography',
+  'music',
+  '3d',
+  'collectibles',
+  'generative',
+  'gaming',
+  'subscriptions',
+  'utility',
+]
+const networkList: Network[] = ['ethereum', 'polygon', 'solana']
+const prices = ['0.02', '0.15', '0.45', '0.75', '1.05', '2.4', '3.2', '4.75', '6.5', '12.3']
 
-// Prices are hand-picked decimal strings so sorting and totals are easy to assert in tests.
-const basePrices = ['0.12', '0.45', '1.2', '0.08', '2.5', '0.333', '0.9', '1.75', '0.05', '3.1']
+// 32 generated entries so filters and pagination have enough variety (40 NFTs in total).
+for (let index = 0; seeds.length < 40; index += 1) {
+  seeds.push({
+    name: `${adjectives[index % adjectives.length]} ${nouns[(index * 5) % nouns.length]}`,
+    number: String(300 + index * 17).padStart(3, '0'),
+    price: prices[index % prices.length] ?? '1',
+    art: arts[index % arts.length] ?? 'glasses',
+    category: categories[(index * 2) % categories.length] ?? 'digital-art',
+    network: networkList[index % networkList.length] ?? 'ethereum',
+    rare: index % 6 === 0,
+    trending: index % 4 === 1,
+  })
+}
+
+const attributesByArt: Record<ArtKey, string[]> = {
+  glasses: ['Óculos', 'Esmeralda', 'Jaqueta college'],
+  'bucket-hat': ['Chapéu bucket', 'Moletom', 'Calmo'],
+  turtleneck: ['Gola alta', 'Brinco', 'Elegante'],
+  headphones: ['Fones', 'Jaqueta bomber', 'Ritmo'],
+}
+
+const creators = ['Nova Sato', 'Lia Ferraz', 'Davi Monteiro']
 
 function editionsFor(index: number, basePrice: string): Edition[] {
-  const supply = 5 + (index % 4) * 5
-  const standard: Edition = {
-    id: `nft-${index + 1}-standard`,
-    name: 'Padrão',
-    priceEth: basePrice,
-    supply,
-    // Every 7th NFT is sold out on the standard edition to exercise "edição indisponível".
-    available: index % 7 === 6 ? 0 : Math.max(1, supply - (index % 5)),
-  }
-  if (index % 3 !== 0) return [standard]
+  const id = `nft-${index + 1}`
+  const base = new Big(basePrice)
+  // Some editions start sold out so "edição indisponível" can be exercised.
   return [
-    standard,
     {
-      id: `nft-${index + 1}-gold`,
-      name: 'Dourada',
-      priceEth: new Big(basePrice).times(2).toFixed(),
-      supply: 3,
-      available: index % 2 === 0 ? 1 : 3,
+      id: `${id}-1-1`,
+      label: '1/1',
+      priceEth: base.times(3).toFixed(),
+      supply: 1,
+      available: index % 9 === 4 ? 0 : 1,
+    },
+    {
+      id: `${id}-1-10`,
+      label: '1/10',
+      priceEth: base.times('1.5').toFixed(),
+      supply: 10,
+      available: 3 + (index % 7),
+    },
+    {
+      id: `${id}-1-50`,
+      label: '1/50',
+      priceEth: base.toFixed(),
+      supply: 50,
+      available: index % 11 === 10 ? 0 : 8 + (index % 13),
+    },
+    {
+      id: `${id}-open`,
+      label: 'Aberta',
+      priceEth: base.times('0.5').toFixed(),
+      supply: 999,
+      available: 999,
     },
   ]
 }
 
 export function createNftFixtures(): Nft[] {
-  return names.map((name, index) => {
-    const priceEth = basePrices[index % basePrices.length] ?? '1'
-    const imageIndex = (index % 8) + 1
+  return seeds.map((seed, index) => {
+    const art = `/assets/nfts/ape-${seed.art}.webp`
+    const name = `${seed.name} #${seed.number}`
     return {
       id: `nft-${index + 1}`,
+      tokenId: `#${seed.number.padStart(4, '0')}`,
       name,
-      description: `${name} faz parte da coleção ${collections[index % collections.length]}. Arte digital autenticada, com edições limitadas e histórico de propriedade simulado.`,
-      collection: collections[index % collections.length] ?? 'Kurio Apes',
-      creator: creators[index % creators.length] ?? creators[0]!,
-      category: categories[index % categories.length] ?? 'art',
-      images: [
-        `/assets/nfts/nft-${imageIndex}.svg`,
-        `/assets/nfts/nft-${(imageIndex % 8) + 1}.svg`,
-        `/assets/nfts/nft-${((imageIndex + 1) % 8) + 1}.svg`,
-      ],
-      priceEth,
-      editions: editionsFor(index, priceEth),
-      featured: index < 4,
-      // Fixed dates keep "mais recentes" deterministic.
-      createdAt: new Date(Date.UTC(2026, 8, 1 + index)).toISOString(),
+      description: `${name} é uma obra digital finalizada à mão da coleção Kurio Editions. Cada atributo fica armazenado nos metadados do token e a procedência é registrada na rede.`,
+      collection: 'Kurio Apes',
+      creator: creators[index % creators.length] ?? 'Nova Sato',
+      category: seed.category,
+      network: seed.network,
+      images: [art, art, art, art],
+      priceEth: seed.price,
+      compareAtPriceEth: seed.compareAt ?? null,
+      rare: seed.rare ?? false,
+      trending: seed.trending ?? false,
+      attributes: attributesByArt[seed.art],
+      rating: { average: 4 + (index % 10) / 10, count: 5 + ((index * 7) % 30) },
+      editions: editionsFor(index, seed.price),
+      // nft-1 is the most recent listing. Fixed dates keep sorting deterministic.
+      createdAt: new Date(Date.UTC(2026, 9, 20) - index * 86_400_000).toISOString(),
       version: 1,
     }
   })

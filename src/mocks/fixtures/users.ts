@@ -1,6 +1,7 @@
 export type UserRecord = {
   id: string
   name: string
+  username: string
   email: string
   avatar: string | null
   /** sha256(`${salt}:${password}`). Plain passwords are never stored. */
@@ -14,6 +15,7 @@ export function createUserFixtures(): UserRecord[] {
     {
       id: 'user-ana',
       name: 'Ana Souza',
+      username: 'ana.souza',
       email: 'ana@example.com',
       avatar: null,
       salt: 'ana-7f3a',
@@ -22,6 +24,7 @@ export function createUserFixtures(): UserRecord[] {
     {
       id: 'user-bruno',
       name: 'Bruno Lima',
+      username: 'bruno.lima',
       email: 'bruno@example.com',
       avatar: null,
       salt: 'bruno-91c2',

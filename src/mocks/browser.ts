@@ -1,6 +1,7 @@
 import { setupWorker } from 'msw/browser'
 import { db } from './db'
 import { handlers } from './handlers'
+import { settleDueOrders } from './handlers/checkout'
 import { isScenarioName, scenario } from './scenarios'
 
 /**
@@ -24,4 +25,7 @@ export async function startMocks() {
     onUnhandledRequest: 'bypass',
     quiet: import.meta.env.PROD,
   })
+  // Pending orders keep settling after a refresh, since their timers died with the old page.
+  settleDueOrders()
+  window.setInterval(settleDueOrders, 1000)
 }
