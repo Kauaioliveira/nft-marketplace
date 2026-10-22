@@ -24,12 +24,12 @@ export function SummaryRows({
         <dt>Desconto</dt>
         <dd data-testid="summary-discount">(-) {formatEth(summary.discountEth, 6)}</dd>
       </div>
-      <div className="flex flex-col">
-        <div className="flex justify-between gap-4">
-          <dt>Taxa de rede</dt>
-          <dd data-testid="summary-fee">{formatEth(summary.networkFeeEth, 6)}</dd>
-        </div>
-        <span className="text-accent-text self-end text-xs">{feeLabel}</span>
+      <div className="flex justify-between gap-4">
+        <dt>Taxa de rede</dt>
+        <dd className="flex flex-col items-end">
+          <span data-testid="summary-fee">{formatEth(summary.networkFeeEth, 6)}</span>
+          <span className="text-accent-text text-xs">{feeLabel}</span>
+        </dd>
       </div>
       <div className="border-border-soft mt-2 flex justify-between gap-4 border-t pt-4 font-bold">
         <dt>Total</dt>
