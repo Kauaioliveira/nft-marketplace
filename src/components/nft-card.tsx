@@ -24,10 +24,13 @@ export function NftCard({ nft, favorite = false, onToggleFavorite, priority }: N
         )}
         <img
           src={nft.images[0]}
+          srcSet={`${nft.images[0]?.replace('.webp', '-sm.webp')} 400w, ${nft.images[0]} 800w`}
+          sizes="(min-width: 1024px) 260px, (min-width: 768px) 30vw, 45vw"
           alt={`Arte do NFT ${nft.name}`}
           width={400}
           height={400}
           loading={priority ? 'eager' : 'lazy'}
+          fetchPriority={priority ? 'high' : undefined}
           decoding="async"
           className="aspect-square w-full rounded-2xl object-cover"
         />
