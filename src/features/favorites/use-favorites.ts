@@ -35,8 +35,17 @@ export function useToggleFavorite() {
       )
       return { previous, key }
     },
-    onError: (_error, { favorite }, context) => {
-      if (context) queryClient.setQueryData(context.key, context.previous)
+    onError: (_error, { nftId, favorite }, context) => {
+      if (context) {
+        // Rolls back to the snapshot; when the list had not loaded yet there is no snapshot,
+        // so the optimistic change is undone directly.
+        queryClient.setQueryData<string[]>(
+          context.key,
+          (ids = []) =>
+            context.previous ??
+            (favorite ? ids.filter((id) => id !== nftId) : [...new Set([...ids, nftId])]),
+        )
+      }
       const message = favorite
         ? 'Não foi possível favoritar. Tente novamente.'
         : 'Não foi possível remover dos favoritos. Tente novamente.'
@@ -47,6 +56,8 @@ export function useToggleFavorite() {
       queryClient.setQueryData(favoriteKeys.list(user!.id), ids)
       announce(favorite ? 'Adicionado aos favoritos.' : 'Removido dos favoritos.')
     },
+    // Whatever happened, the server copy wins afterwards.
+    onSettled: () => queryClient.invalidateQueries({ queryKey: favoriteKeys.list(user!.id) }),
   })
 
   return (nftId: string, favorite: boolean) => {
