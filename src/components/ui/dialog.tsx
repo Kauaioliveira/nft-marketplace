@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { Dialog as DialogPrimitive } from '@base-ui/react/dialog'
+import { trapTabKey } from '@/lib/focus-trap'
 import { cn } from '@/lib/utils'
 
 import { Button } from '@/components/ui/button'
@@ -52,6 +53,10 @@ function DialogContent({
           className,
         )}
         {...props}
+        onKeyDown={(event) => {
+          trapTabKey(event)
+          props.onKeyDown?.(event)
+        }}
       >
         {children}
         {showCloseButton && (

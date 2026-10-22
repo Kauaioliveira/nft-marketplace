@@ -65,6 +65,15 @@ export function NftGallery({ images, name }: { images: string[]; name: string })
               height={800}
               className="aspect-square w-full rounded-xl object-cover"
             />
+            <a
+              href={current}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand justify-self-start text-sm underline-offset-4 hover:underline"
+            >
+              Abrir imagem em tamanho original
+              <span className="sr-only"> (abre em nova aba)</span>
+            </a>
           </DialogContent>
         </Dialog>
       </div>
