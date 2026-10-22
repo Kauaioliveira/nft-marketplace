@@ -146,7 +146,7 @@ function Receipt({ order }: { order: Order }) {
               <th scope="col" className="pb-2 font-bold">
                 NFTs
               </th>
-              <th scope="col" className="pb-2 text-center font-bold">
+              <th scope="col" className="px-2 pb-2 text-center font-bold">
                 Edições
               </th>
               <th scope="col" className="pb-2 text-right font-bold">
@@ -164,7 +164,7 @@ function Receipt({ order }: { order: Order }) {
                       alt=""
                       width={64}
                       height={64}
-                      className="size-16 rounded object-cover"
+                      className="size-16 rounded object-cover max-sm:hidden"
                     />
                     <div>
                       <p className="font-bold">{item.name}</p>

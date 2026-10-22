@@ -406,7 +406,9 @@ function ReviewDialog(props: {
               <span>
                 {item.name} · {item.editionLabel} (x {item.quantity})
               </span>
-              <span className="text-brand font-bold">{formatEth(item.lineTotalEth)}</span>
+              <span className="text-brand font-bold whitespace-nowrap">
+                {formatEth(item.lineTotalEth)}
+              </span>
             </li>
           ))}
         </ul>

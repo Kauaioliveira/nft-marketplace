@@ -1,4 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
+import { FlaskConical } from 'lucide-react'
 import { useState } from 'react'
 import { http } from '@/api/http'
 import { Button } from '@/components/ui/button'
@@ -79,9 +80,13 @@ export function DevPanel() {
         variant="secondary"
         aria-expanded={open}
         aria-controls="dev-panel"
+        aria-label={open ? 'Fechar cenários' : 'Cenários'}
         onClick={() => setOpen((value) => !value)}
+        // A small icon on phones so the demo control does not cover the page content.
+        className="max-md:size-10 max-md:rounded-full max-md:p-0 max-md:opacity-80"
       >
-        {open ? 'Fechar cenários' : 'Cenários'}
+        <FlaskConical className="size-4" aria-hidden />
+        <span className="max-md:sr-only">{open ? 'Fechar cenários' : 'Cenários'}</span>
       </Button>
     </div>
   )

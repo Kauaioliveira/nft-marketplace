@@ -169,7 +169,7 @@ function CartItems({ items }: { items: CartItem[] }) {
 
   return (
     <>
-      <table className="w-full border-separate border-spacing-y-3 max-md:hidden">
+      <table className="w-full border-separate border-spacing-y-3 max-lg:hidden">
         <caption className="sr-only">NFTs no carrinho, com preço, edições e total</caption>
         <thead>
           <tr className="text-left text-[17px]">
@@ -254,7 +254,7 @@ function CartItems({ items }: { items: CartItem[] }) {
         </tbody>
       </table>
 
-      <ul className="flex flex-col gap-4 md:hidden" aria-label="NFTs no carrinho">
+      <ul className="flex flex-col gap-4 lg:hidden" aria-label="NFTs no carrinho">
         {items.map((item) => (
           <li
             key={item.id}

@@ -92,7 +92,7 @@ export function CatalogSection({ search, onSearchChange }: CatalogSectionProps) 
           <div
             role="tablist"
             aria-label="Seleção do catálogo"
-            className="flex max-w-full gap-5 overflow-x-auto"
+            className="flex max-w-full gap-4 overflow-x-auto sm:gap-5"
           >
             {nftTabs.map((tab) => {
               const selected = (search.tab ?? 'all') === tab
@@ -104,7 +104,7 @@ export function CatalogSection({ search, onSearchChange }: CatalogSectionProps) 
                   aria-selected={selected}
                   onClick={() => changeFilters({ tab: tab === 'all' ? undefined : tab })}
                   className={cn(
-                    'border-b-2 pb-1 text-base whitespace-nowrap md:text-[17px]',
+                    'border-b-2 pb-1 text-sm whitespace-nowrap sm:text-base md:text-[17px]',
                     selected ? 'border-brand text-brand' : 'hover:text-brand border-transparent',
                   )}
                 >
