@@ -140,6 +140,61 @@ carrinhos, cotações, pedidos, chaves de idempotência e carteiras de forma con
 fixtures. Endpoints `/api/__dev/*` controlam cenários, falhas pontuais e eventos para a demonstração e os
 testes; eles existem apenas na camada de mocks.
 
+## Perfil e carteiras
+
+- `GET/PATCH /api/profile` edita nome, usuário, e-mail, nome ENS e apelido da carteira (422 por campo,
+  409 se o e-mail ou o usuário pertencem a outra conta). Depois de salvar, a sessão é revalidada para o
+  cabeçalho refletir o novo nome.
+- `PUT/DELETE /api/profile/avatar` recebe a imagem como data URL (PNG, JPG, WEBP ou GIF, até ~200 KB, para
+  caber no `localStorage` do mock).
+- `POST /api/profile/password` exige a senha atual; a nova é gravada com salt novo.
+- `PUT /api/wallets/:role` cria ou substitui a carteira principal ou a secundária; o mesmo endereço não pode
+  estar nas duas (409). As carteiras cadastradas preenchem o checkout.
+
+## Acessibilidade
+
+- Link "Pular para o conteúdo", foco visível, labels e mensagens de erro ligadas por `aria-describedby`,
+  `aria-invalid` nos campos com erro.
+- Uma região `aria-live` única anuncia mutations (carrinho, favoritos, perfil) e mudanças em tempo real.
+- Diálogos e drawers prendem o foco com Tab e Shift+Tab e devolvem o foco ao gatilho ao fechar. O foco do
+  primitivo do Base UI escapava nos testes, então `DialogContent` e `SheetContent` tratam as bordas do Tab
+  (`lib/focus-trap.ts`).
+- Estados não dependem só de cor: edição esgotada aparece riscada e com texto, item favoritado muda o rótulo.
+- Skeletons com shimmer têm as mesmas dimensões do conteúdo e param com `prefers-reduced-motion`.
+- Testes com axe (WCAG 2.1 AA, inclusive contraste) nas telas principais, em desktop e mobile, e checagem de
+  rolagem horizontal em 320 px, 390 px e 720 px (1440 px com zoom de 200%).
+
+## Performance e Lighthouse
+
+`pnpm lighthouse` (com o build servido por `pnpm preview`) ou `pnpm lighthouse:ci` (build + servidor +
+auditoria) roda 3 vezes cada combinação de página (início e detalhe) e perfil (mobile e desktop), com perfil
+limpo do Chrome por execução. Configuração em `lighthouse/config.mjs`; medianas, LCP, CLS, TBT, versões e
+ambiente em `lighthouse/summary.md`; relatórios HTML e JSON de cada execução em `lighthouse/reports/`.
+
+Otimizações aplicadas:
+- O app carrega em paralelo com o MSW. As requisições esperam o worker (`mocksReady`) e o `socket.io-client`
+  só é importado depois dele, para que a interceptação do WebSocket continue funcionando.
+- Preload da fonte (plugin no `vite.config.ts`) e da arte do hero; `srcset` com versão de 400 px nos cards;
+  rotas divididas por código (`autoCodeSplitting`); WebP para as artes.
+- `main` com no mínimo uma tela de altura, para o rodapé não entrar na área visível quando o skeleton dá
+  lugar ao conteúdo (CLS do detalhe caiu de 0,21 para 0).
+
+### Resultados abaixo da meta
+
+No desktop, início e detalhe ficam em ~98 de Performance e 100 nas outras categorias. No perfil mobile do
+Lighthouse (CPU 4x mais lenta e 4G lento simulado), Performance fica entre ~60 e ~70, com Accessibility,
+Best Practices e SEO em 100. As causas medidas nos relatórios:
+
+1. **A API inteira roda no navegador.** O bundle do MSW (~170 KB) e o banco simulado são avaliados na thread
+   principal antes de qualquer resposta; com a CPU 4x mais lenta isso soma ~0,7 s de script e boa parte do
+   TBT (~400 a 650 ms).
+2. **O LCP do mobile é a arte do primeiro card**, que só é conhecida depois da resposta de `/api/nfts`, ou seja,
+   depois de o worker subir. O atraso de carregamento do recurso (~0,6 s) e o de renderização vêm daí.
+3. Em produção, com uma API real, o item 1 desaparece e o item 2 vira uma requisição de rede comum.
+
+A auditoria usa o build de demonstração completo (mocks, imagens e fontes reais), sem simplificações feitas só
+para a medição, como pede o enunciado.
+
 ## Decisões e desvios
 
 - **Login e cadastro como página**: no Figma são modais sobre a home. Viraram páginas com o mesmo cartão para
@@ -155,9 +210,21 @@ testes; eles existem apenas na camada de mocks.
 - **Imagens**: o arquivo do Figma tem 4 artes de NFT; o catálogo de 40 itens as reaproveita. Foram convertidas
   para WebP em dois tamanhos.
 - **Fonte**: Roboto Mono, servida localmente via `@fontsource-variable/roboto-mono`.
+- **Perfil**: o layout tem um único "Salvar" para dados e senha. Ficaram dois formulários ("Salvar" e "Alterar
+  senha"), porque são operações diferentes na API e uma falha em uma não deve descartar a outra.
+- **Carteiras**: o frame repete campos do perfil (nome de exibição, e-mail, código de indicação). A carteira
+  guarda apelido, rede, tipo e endereço; o resto continua no perfil. "Igual à carteira principal" copia rede e
+  tipo, mas o endereço precisa ser outro.
+- **Itens do menu "Meu perfil"** fora do escopo (Atividade, Lista de interesse, Ofertas, Arquivos baixados,
+  Suporte) mostram "em breve".
+- **Botão "Cenários"**: painel de demonstração que não existe no Figma; fica no canto inferior e só é
+  carregado quando os mocks estão ativos.
 
 ## Limitações conhecidas
 
 - O backend é inteiramente simulado no navegador; o estado fica no `localStorage` de cada navegador.
 - O Service Worker do MSW precisa de um navegador que permita Service Workers (janelas anônimas de alguns
   navegadores e webviews podem bloquear). Nesse caso a aplicação mostra uma mensagem em vez da tela vazia.
+- As baselines de regressão visual foram geradas no Windows (sufixo `-win32`). Em outro sistema operacional
+  a renderização de fontes muda, então é preciso gerar baselines próprias com `--update-snapshots`.
+- Performance mobile abaixo de 90 no Lighthouse, pelos motivos da seção de performance.

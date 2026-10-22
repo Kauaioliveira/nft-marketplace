@@ -30,6 +30,8 @@ pnpm dev            # http://localhost:5173 com os mocks ativos
 | `pnpm format` | Prettier |
 | `pnpm test:e2e` | Playwright (Chromium desktop 1440px e mobile Pixel 7) contra o build |
 | `pnpm test:e2e:report` | Abre o relatório HTML do último teste |
+| `pnpm lighthouse:ci` | Build, servidor e auditoria Lighthouse (3 execuções por página e perfil) |
+| `pnpm lighthouse` | Só a auditoria, com o build já servido em `http://localhost:4173` |
 
 Na primeira vez, instale o navegador dos testes: `pnpm exec playwright install chromium`.
 
@@ -113,6 +115,15 @@ Relatório HTML em `playwright-report/` e traces das falhas em `test-results/`.
 | `purchase.spec.ts` | compra completa até o recibo; pagamento recusado |
 | `checkout-resilience.spec.ts` | preço alterado via Socket.IO, timeout com a mesma chave, clique repetido, carteira recusada |
 | `realtime.spec.ts` | evento duplicado e antigo, reconexão, aviso no carrinho, pedido pendente após refresh, favorito com rollback |
+| `profile.spec.ts` | dados do perfil (validação, conflito, persistência), avatar, senha e carteiras |
+| `accessibility.spec.ts` | teclado, foco em diálogos, erros associados aos campos, skeletons, erro e nova tentativa, rolagem horizontal |
+| `axe.spec.ts` | auditoria axe (WCAG 2.1 AA) das telas públicas e privadas |
+| `visual.spec.ts` | regressão visual de início, detalhe, carrinho e pagamento (baselines em `visual.spec.ts-snapshots/`) |
+
+## Lighthouse
+
+Resultados (medianas de 3 execuções) em [`lighthouse/summary.md`](./lighthouse/summary.md) e relatórios
+completos em `lighthouse/reports/`. A análise dos resultados abaixo da meta está no `ARCHITECTURE.md`.
 
 ## Estrutura
 
