@@ -42,7 +42,7 @@ export function DevPanel() {
   const bumpPrice = () => run(() => http.post(`/__dev/nfts/${DEMO_NFT_ID}/bump-price`))
 
   return (
-    <div className="fixed right-4 bottom-4 z-50 flex flex-col items-end gap-2 text-sm">
+    <div className="fixed right-4 bottom-24 z-50 flex flex-col items-end gap-2 text-sm md:bottom-4">
       {open && (
         <section
           id="dev-panel"

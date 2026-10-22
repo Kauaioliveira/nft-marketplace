@@ -28,3 +28,6 @@ playwright-report
 test-results
 blob-report
 .vercel
+
+# Router plugin cache
+.tanstack
