@@ -6,7 +6,7 @@ import { scenarioDescriptions, scenarioNames, type ScenarioName } from '@/mocks/
 import { useAnnounce } from './live-announcer-context'
 
 // Newest NFT, shown first on the home page, so the change is visible right away.
-const DEMO_NFT_ID = 'nft-40'
+const DEMO_NFT_ID = 'nft-1'
 
 /**
  * Demo controls for the mock backend: pick a scenario, reset the data and trigger a realtime
