@@ -1,10 +1,13 @@
 import { Link, useNavigate } from '@tanstack/react-router'
-import { LogIn, Search, ShoppingCart } from 'lucide-react'
+import { LogIn, ShoppingCart } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { useCart } from '@/features/cart/use-cart'
 import { useAuthActions } from '@/features/session/use-auth-actions'
 import { useSession } from '@/features/session/use-session'
+import { useNavSection } from '@/lib/nav-section'
+import { HeaderSearch } from './header-search'
+import { NavLink } from './nav-link'
 import { cn } from '@/lib/utils'
 
 const navLinkClass =
@@ -20,6 +23,7 @@ function comingSoon(section: string) {
 export function SiteHeader() {
   const { data: cart } = useCart()
   const count = cart?.itemCount ?? 0
+  const { header: section } = useNavSection()
 
   return (
     <header className="mx-auto w-full max-w-[1440px] px-4 md:px-10 xl:px-[120px]">
@@ -31,19 +35,22 @@ export function SiteHeader() {
         <nav aria-label="Principal" className="hidden md:block">
           <ul className="flex items-center gap-6 lg:gap-10">
             <li>
-              <Link
-                to="/"
-                className={navLinkClass}
-                activeOptions={{ exact: true, includeSearch: false }}
-                activeProps={{ className: activeNavClass }}
+              <NavLink
+                href="/"
+                active={section === 'home'}
+                className={cn(navLinkClass, section === 'home' && activeNavClass)}
               >
                 Início
-              </Link>
+              </NavLink>
             </li>
             <li>
-              <Link to="/" hash="catalogo" className={navLinkClass}>
+              <NavLink
+                href="/#catalogo"
+                active={section === 'market'}
+                className={cn(navLinkClass, section === 'market' && activeNavClass)}
+              >
                 Mercado
-              </Link>
+              </NavLink>
             </li>
             <li>
               <button
@@ -67,14 +74,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link
-            to="/"
-            hash="catalogo"
-            aria-label="Buscar NFTs"
-            className="hover:bg-secondary hidden rounded-md p-2 md:block"
-          >
-            <Search className="size-6" aria-hidden />
-          </Link>
+          <HeaderSearch />
           <Link
             to="/cart"
             aria-label={`Carrinho, ${count} ${count === 1 ? 'item' : 'itens'}`}
