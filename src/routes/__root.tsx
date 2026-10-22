@@ -29,7 +29,9 @@ function RootLayout() {
         Pular para o conteúdo
       </a>
       <SiteHeader />
-      <main id="conteudo" className="flex-1">
+      {/* At least one screen tall: the footer starts below the fold, so it does not jump into
+          view while a page swaps its skeleton for the real content (CLS). */}
+      <main id="conteudo" className="min-h-dvh flex-1">
         <Outlet />
       </main>
       <SiteFooter />
