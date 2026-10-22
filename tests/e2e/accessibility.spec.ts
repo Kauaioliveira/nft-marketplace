@@ -79,15 +79,18 @@ test.describe('teclado, foco e estados de carregamento', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Sage Nomad #009' })).toBeVisible()
   })
 
-  test('sem rolagem horizontal em 390px', async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 })
-    for (const path of ['/', '/nfts/nft-1', '/cart', '/login']) {
-      await start(page, 'default', path)
-      await page.waitForTimeout(300)
-      const overflow = await page.evaluate(
-        () => document.documentElement.scrollWidth - window.innerWidth,
-      )
-      expect(overflow, path).toBeLessThanOrEqual(0)
-    }
-  })
+  // 390px is the smallest frame; 720px is a 1440px screen at 200% zoom; 320px is the WCAG reflow width.
+  for (const width of [390, 720, 320]) {
+    test(`sem rolagem horizontal em ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 844 })
+      for (const path of ['/', '/nfts/nft-1', '/cart', '/login']) {
+        await start(page, 'default', path)
+        await page.waitForTimeout(300)
+        const overflow = await page.evaluate(
+          () => document.documentElement.scrollWidth - window.innerWidth,
+        )
+        expect(overflow, path).toBeLessThanOrEqual(0)
+      }
+    })
+  }
 })
