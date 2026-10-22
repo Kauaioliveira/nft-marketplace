@@ -121,7 +121,7 @@ export function NftPurchasePanel({ nft }: { nft: Nft }) {
           disabled={soldOut || limitReached}
           onChange={setRequested}
         />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button
             size="lg"
             className="h-10 px-9 font-bold"

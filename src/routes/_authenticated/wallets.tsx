@@ -66,7 +66,11 @@ function WalletsPage() {
   return (
     <AccountLayout title="Carteiras">
       {isPending && (
-        <div role="status" aria-label="Carregando carteiras" className="grid gap-6 md:grid-cols-2">
+        <div
+          role="status"
+          aria-label="Carregando carteiras"
+          className="grid grid-cols-1 gap-6 md:grid-cols-2"
+        >
           {Array.from({ length: 4 }, (_, index) => (
             <Skeleton key={index} className="h-[70px] w-full" />
           ))}
@@ -200,7 +204,7 @@ function WalletSection(props: {
           onSubmit={form.handleSubmit((values) => mutation.mutate(values))}
           aria-labelledby={headingId}
         >
-          <div className="grid gap-6 md:grid-cols-2 md:gap-x-7">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-x-7">
             <FormField
               label="Apelido da carteira"
               required

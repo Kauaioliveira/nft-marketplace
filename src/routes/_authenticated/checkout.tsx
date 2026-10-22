@@ -174,7 +174,7 @@ function CheckoutForm({ user, wallets }: { user: User; wallets: Wallet[] | undef
         <form
           noValidate
           onSubmit={openReview}
-          className="grid gap-10 lg:grid-cols-[1fr_405px] lg:gap-8"
+          className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_405px] lg:gap-8"
         >
           <CollectorFields form={form} />
 
@@ -250,7 +250,7 @@ function CollectorFields({ form }: { form: UseFormReturn<CheckoutValues> }) {
   return (
     <fieldset className="flex flex-col gap-5">
       <legend className="mb-4 text-lg font-bold">Perfil do colecionador</legend>
-      <div className="grid gap-5 md:grid-cols-2 md:gap-x-6">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-x-6">
         <FormField
           label="Nome de exibição"
           required

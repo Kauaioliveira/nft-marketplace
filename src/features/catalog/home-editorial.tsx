@@ -52,7 +52,7 @@ export function HomeEditorial() {
     <>
       <section
         aria-label="Destaques"
-        className="mx-auto mt-24 grid max-w-[1440px] gap-6 px-4 md:px-[120px] lg:grid-cols-2"
+        className="mx-auto mt-24 grid max-w-[1440px] grid-cols-1 gap-6 px-4 md:px-[120px] lg:grid-cols-2"
       >
         {promos.map((promo) => (
           <article
@@ -94,7 +94,7 @@ export function HomeEditorial() {
         <p className="text-sand mt-3 text-center text-[15px]">
           Histórias, guias e insights para colecionadores sobre o universo da propriedade digital.
         </p>
-        <ul className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {articles.map((article) => (
             <li key={article.title} className="bg-surface-card overflow-hidden rounded-lg">
               <img

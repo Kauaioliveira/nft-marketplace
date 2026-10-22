@@ -60,7 +60,11 @@ function ProfilePage() {
 
 function ProfileSkeleton() {
   return (
-    <div role="status" aria-label="Carregando perfil" className="grid gap-6 md:grid-cols-2">
+    <div
+      role="status"
+      aria-label="Carregando perfil"
+      className="grid grid-cols-1 gap-6 md:grid-cols-2"
+    >
       {Array.from({ length: 6 }, (_, index) => (
         <Skeleton key={index} className="h-[70px] w-full" />
       ))}
@@ -157,7 +161,7 @@ function ProfileForm({ profile }: { profile: Profile }) {
       onSubmit={form.handleSubmit((values) => mutation.mutate(values))}
       aria-label="Dados do perfil"
     >
-      <div className="grid gap-6 md:grid-cols-2 md:gap-x-7">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-x-7">
         <FormField
           label="Nome de exibição"
           required

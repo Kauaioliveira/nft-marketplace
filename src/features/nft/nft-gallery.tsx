@@ -9,7 +9,10 @@ export function NftGallery({ images, name }: { images: string[]; name: string })
 
   return (
     <div className="grid grid-cols-[100px_1fr] gap-7 max-md:grid-cols-1">
-      <ul aria-label="Imagens do NFT" className="flex gap-4 max-md:order-2 md:flex-col">
+      <ul
+        aria-label="Imagens do NFT"
+        className="grid grid-cols-4 gap-3 max-md:order-2 md:flex md:flex-col md:gap-4"
+      >
         {images.map((image, index) => (
           <li key={`${image}-${index}`}>
             <button
@@ -18,7 +21,7 @@ export function NftGallery({ images, name }: { images: string[]; name: string })
               aria-pressed={index === active}
               onClick={() => setActive(index)}
               className={cn(
-                'block size-[72px] overflow-hidden rounded-md border-2 md:size-[100px]',
+                'block aspect-square w-full overflow-hidden rounded-md border-2 md:size-[100px]',
                 index === active
                   ? 'border-brand'
                   : 'border-transparent opacity-80 hover:opacity-100',

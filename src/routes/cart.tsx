@@ -111,7 +111,7 @@ function CartPage() {
           </Button>
         </div>
       ) : (
-        <div className="grid gap-10 lg:grid-cols-[1fr_332px] lg:gap-[86px]">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_332px] lg:gap-[86px]">
           <section aria-label="Itens do carrinho">
             {isPending ? (
               <CartItemsSkeleton />

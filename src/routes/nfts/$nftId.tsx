@@ -69,7 +69,7 @@ function NftDetailPage() {
       )}
       {nft && (
         <>
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,572px)_1fr]">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,572px)_1fr]">
             <NftGallery images={nft.images} name={nft.name} />
             <NftPurchasePanel key={nft.id} nft={nft} />
           </div>
@@ -91,12 +91,12 @@ function DetailSkeleton() {
     <div
       role="status"
       aria-label="Carregando NFT"
-      className="grid gap-8 lg:grid-cols-[minmax(0,572px)_1fr]"
+      className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,572px)_1fr]"
     >
       <div className="grid grid-cols-[100px_1fr] gap-7 max-md:grid-cols-1">
-        <div className="flex gap-4 max-md:order-2 md:flex-col">
+        <div className="grid grid-cols-4 gap-3 max-md:order-2 md:flex md:flex-col md:gap-4">
           {Array.from({ length: 4 }, (_, index) => (
-            <Skeleton key={index} className="size-[72px] md:size-[100px]" />
+            <Skeleton key={index} className="aspect-square w-full md:size-[100px]" />
           ))}
         </div>
         <Skeleton className="aspect-square w-full rounded-[24px]" />

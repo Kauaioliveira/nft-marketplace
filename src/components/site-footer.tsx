@@ -34,7 +34,7 @@ export function SiteFooter() {
   return (
     <footer className="mx-auto mt-24 w-full max-w-[1440px] px-4 pb-6 md:px-[120px]">
       <div className="bg-surface-card">
-        <div className="grid gap-8 px-6 py-8 md:grid-cols-2 lg:grid-cols-4 lg:px-12">
+        <div className="grid grid-cols-1 gap-8 px-6 py-8 md:grid-cols-2 lg:grid-cols-4 lg:px-12">
           {highlights.map((item) => (
             <div key={item.title} className="lg:border-brand lg:border-r lg:pr-6">
               <span
@@ -50,14 +50,14 @@ export function SiteFooter() {
           <NewsletterForm />
         </div>
 
-        <div className="bg-surface-dark grid gap-4 px-8 py-6 text-[15px] sm:grid-cols-2 lg:grid-cols-4">
+        <div className="bg-surface-dark grid grid-cols-1 gap-4 px-8 py-6 text-[15px] sm:grid-cols-2 lg:grid-cols-4">
           <span className="font-bold tracking-[0.06em]">KURIO</span>
           <span>Feito para colecionadores, criadores e cultura</span>
           <span>contato@email.com</span>
           <span>+55 11 4002 8922</span>
         </div>
 
-        <div className="grid gap-8 px-8 py-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-8 px-8 py-8 sm:grid-cols-2 lg:grid-cols-4">
           <nav aria-label="Meu perfil">
             <h2 className="mb-3 text-lg font-bold">Meu perfil</h2>
             <ul className="space-y-2 text-[15px]">
