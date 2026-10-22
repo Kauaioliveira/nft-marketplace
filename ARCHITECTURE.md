@@ -162,7 +162,9 @@ testes; eles existem apenas na camada de mocks.
 - Estados não dependem só de cor: edição esgotada aparece riscada e com texto, item favoritado muda o rótulo.
 - Skeletons com shimmer têm as mesmas dimensões do conteúdo e param com `prefers-reduced-motion`.
 - Testes com axe (WCAG 2.1 AA, inclusive contraste) nas telas principais, em desktop e mobile, e checagem de
-  rolagem horizontal em 320 px, 390 px e 720 px (1440 px com zoom de 200%).
+  rolagem horizontal em 320, 390, 720 (1440 px com zoom de 200%), 768 e 1440 px, em todas as telas públicas.
+- Breakpoints: mobile até 767 px (navegação inferior do frame mobile), tablet a partir de 768 px (menu do
+  topo, recuo lateral de 40 px) e desktop a partir de 1280 px (recuo de 120 px do Figma).
 
 ## Performance e Lighthouse
 

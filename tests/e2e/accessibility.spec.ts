@@ -79,11 +79,19 @@ test.describe('teclado, foco e estados de carregamento', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Sage Nomad #009' })).toBeVisible()
   })
 
-  // 390px is the smallest frame; 720px is a 1440px screen at 200% zoom; 320px is the WCAG reflow width.
-  for (const width of [390, 720, 320]) {
+  // 390, 768 and 1440 are the widths the brief asks for; 720px is a 1440px screen at 200% zoom;
+  // 320px is the WCAG reflow width.
+  for (const width of [320, 390, 720, 768, 1440]) {
     test(`sem rolagem horizontal em ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 844 })
-      for (const path of ['/', '/nfts/nft-1', '/cart', '/login']) {
+      for (const path of [
+        '/',
+        '/nfts/nft-1',
+        '/cart',
+        '/login',
+        '/register',
+        '/rota-inexistente',
+      ]) {
         await start(page, 'default', path)
         await page.waitForTimeout(300)
         const overflow = await page.evaluate(
