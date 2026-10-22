@@ -3,7 +3,7 @@
 Marketplace de NFTs em React + TypeScript com descoberta, compra e conta do colecionador.
 Toda a API (REST e Socket.IO) é simulada com MSW na camada de rede, inclusive no build publicado.
 
-> Projeto em desenvolvimento. Esta versão contém a base: rotas, cliente HTTP, mocks, tempo real e testes.
+Decisões, contratos REST, eventos e políticas de cache estão em [`ARCHITECTURE.md`](./ARCHITECTURE.md).
 
 ## Stack
 
@@ -50,7 +50,10 @@ Os valores padrão estão em `.env` (nenhum é segredo):
 | `ana@example.com` | `Senha123!` |
 | `bruno@example.com` | `Senha123!` |
 
-As senhas ficam no mock só como hash SHA-256 com salt.
+As senhas ficam no mock só como hash SHA-256 com salt. A Ana já tem uma carteira MetaMask cadastrada e um
+favorito; o Bruno começa sem carteira.
+
+Cupons: `KURIO10` (10%), `SELVA25` (25%) e `VENCIDO15` (expirado).
 
 ## Cenários de simulação
 
@@ -67,14 +70,27 @@ os dados:
 | `flaky` | Falhas 503 intermitentes e respostas fora de ordem |
 | `offline` | Toda requisição falha na rede |
 | `empty` | Catálogo vazio |
-| `session-expired` | Sessão expira na próxima requisição autenticada |
-| `price-change` | Preço muda durante o checkout |
-| `sold-out` | Edição esgota durante o checkout |
-| `order-timeout` | Pedido criado, mas a resposta não chega |
+| `session-expired` | Sessões novas expiram em 30 segundos |
+| `price-change` | O preço muda logo depois que a revisão do checkout abre |
+| `sold-out` | A edição esgota logo depois que a revisão do checkout abre |
+| `order-timeout` | O pedido é criado, mas a primeira resposta não chega (timeout de 8 s) |
 | `payment-declined` | Pagamento recusado |
+| `wallet-rejected` | A carteira recusa a conexão |
 
 O painel também tem **Simular alteração de preço**: o mock altera o preço no banco e emite
 `nft.updated` pelo Socket.IO. A tela atualiza a partir do evento.
+
+### Reproduzindo os fluxos de falha
+
+| Fluxo | Como reproduzir |
+| --- | --- |
+| Preço alterado no checkout | Cenário `price-change`, entre como Ana, adicione um NFT, conecte a carteira e clique em "Revisar compra". Em ~1 s a revisão é bloqueada e pede "Atualizar cotação". |
+| Timeout com recuperação | Cenário `order-timeout`, faça a compra. Após 8 s aparece "Não recebemos a confirmação"; "Tentar novamente" recupera o mesmo pedido. |
+| Pagamento recusado | Cenário `payment-declined`. O pedido termina recusado e o carrinho fica intacto. |
+| Sessão expirada | Cenário `session-expired` (sessão de 30 s) ou, nos testes, `POST /api/__dev/expire-sessions`. |
+| Lentidão e skeletons | Cenário `slow`. |
+| Falhas intermitentes e respostas fora de ordem | Cenário `flaky`. |
+| Sem conexão | Cenário `offline`. |
 
 ## Tempo real nos mocks
 
@@ -83,12 +99,28 @@ O servidor Socket.IO simulado responde em um endereço próprio (`VITE_SOCKET_UR
 WebSocket de HMR do Vite, que usa a mesma origem da aplicação. O app só é carregado depois que o MSW
 inicia, porque o `engine.io-client` guarda a referência ao `WebSocket` global ao ser importado.
 
+## Testes
+
+`pnpm test:e2e` sobe o build de produção com mocks (`pnpm build && pnpm preview`) e roda os testes em Chromium
+desktop (1440px) e mobile (Pixel 7). Cada teste parte de um banco limpo (`?scenario=` reseta o estado) e usa os
+endpoints `/api/__dev/*`, chamados de dentro da página, para disparar falhas e eventos de forma determinística.
+Relatório HTML em `playwright-report/` e traces das falhas em `test-results/`.
+
+| Arquivo | Cobertura |
+| --- | --- |
+| `catalog.spec.ts` | busca, filtros combinados, ordenação, paginação, histórico, vazio, erro, detalhe direto e 404 |
+| `account.spec.ts` | cadastro (validação e conflito), login, refresh, logout, troca de usuário, expiração no checkout, carrinho do visitante |
+| `purchase.spec.ts` | compra completa até o recibo; pagamento recusado |
+| `checkout-resilience.spec.ts` | preço alterado via Socket.IO, timeout com a mesma chave, clique repetido, carteira recusada |
+| `realtime.spec.ts` | evento duplicado e antigo, reconexão, aviso no carrinho, pedido pendente após refresh, favorito com rollback |
+
 ## Estrutura
 
 ```
 src/
   api/         cliente Axios, contratos (zod), erros, query client, queries por recurso
   realtime/    conexão Socket.IO, filtro de eventos duplicados/antigos, provider
+  features/    telas e hooks por domínio (catálogo, NFT, sessão, carrinho, checkout, favoritos)
   routes/      rotas do TanStack Router (_authenticated = telas privadas)
   components/  layout, componentes compartilhados e shadcn/ui (components/ui)
   mocks/       MSW: handlers REST, servidor Socket.IO, banco persistido, fixtures, cenários
