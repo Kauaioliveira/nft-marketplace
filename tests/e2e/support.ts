@@ -58,3 +58,10 @@ export async function addToCart(page: Page, nftId: string, quantity = 1) {
 export async function armFailure(page: Page, method: string, path: string, status: number) {
   await devCall(page, 'fail-next', { method, path, status })
 }
+
+export async function mockStats(page: Page) {
+  return page.evaluate(async () => {
+    const response = await fetch('/api/__dev/stats')
+    return (await response.json()) as { orders: number }
+  })
+}

@@ -23,6 +23,11 @@ const failNextSchema = z.object({
 export const devHandlers = [
   http.get('*/api/__dev/scenario', () => HttpResponse.json({ scenario: scenario.get() })),
 
+  // Lets tests assert side effects, such as "only one order was created".
+  http.get('*/api/__dev/stats', () =>
+    HttpResponse.json({ orders: Object.keys(db.read().orders).length }),
+  ),
+
   http.post('*/api/__dev/reset', async ({ request }) => {
     const body = (await request.json().catch(() => ({}))) as { scenario?: unknown }
     const next = body.scenario ?? 'default'
