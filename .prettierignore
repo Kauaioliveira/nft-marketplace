@@ -1,0 +1,6 @@
+dist
+pnpm-lock.yaml
+src/routeTree.gen.ts
+public/mockServiceWorker.js
+playwright-report
+test-results
