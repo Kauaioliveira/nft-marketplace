@@ -52,7 +52,7 @@ export function HomeEditorial() {
     <>
       <section
         aria-label="Destaques"
-        className="mx-auto mt-24 grid max-w-[1440px] grid-cols-1 gap-6 px-4 md:px-[120px] lg:grid-cols-2"
+        className="mx-auto mt-24 grid max-w-[1440px] grid-cols-1 gap-6 px-4 md:px-10 lg:grid-cols-2 xl:px-[120px]"
       >
         {promos.map((promo) => (
           <article
@@ -86,7 +86,7 @@ export function HomeEditorial() {
 
       <section
         aria-labelledby="journal-title"
-        className="mx-auto mt-24 max-w-[1440px] px-4 md:px-[120px]"
+        className="mx-auto mt-24 max-w-[1440px] px-4 md:px-10 xl:px-[120px]"
       >
         <h2 id="journal-title" className="text-center text-[28px] font-bold">
           Diário da Cunhagem

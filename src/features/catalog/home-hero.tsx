@@ -16,14 +16,14 @@ export function HomeHero() {
   return (
     <section
       aria-labelledby="hero-title"
-      className="mx-auto max-w-[1440px] px-4 pt-6 md:px-[120px] md:pt-8"
+      className="mx-auto max-w-[1440px] px-4 pt-6 md:px-10 md:pt-8 xl:px-[120px]"
     >
       <div className="relative grid grid-cols-[1.15fr_1fr] items-center gap-3 overflow-hidden rounded-[32px] bg-[radial-gradient(circle_at_40%_45%,#7a4a28_0%,#3d2414_45%,var(--color-surface-card)_100%)] p-4 sm:gap-6 sm:p-6 md:grid-cols-[1fr_minmax(0,450px)] md:rounded-none md:bg-none md:p-0">
         <div className="flex flex-col gap-2 sm:gap-4 md:pl-10">
           <p className="text-sm sm:text-base md:text-[15px]">Bem-vindo à Kurio</p>
           <h1
             id="hero-title"
-            className="text-lg leading-7 font-bold uppercase sm:text-[28px] sm:leading-[44px] md:text-[43px] md:leading-[70px]"
+            className="text-lg leading-7 font-bold uppercase sm:text-[28px] sm:leading-[44px] lg:text-[43px] lg:leading-[70px]"
           >
             Seja dono do futuro <br className="hidden md:block" />
             da arte digital

@@ -32,7 +32,7 @@ const footerCategories = ['digital-art', 'photography', 'music', '3d', 'utility'
 
 export function SiteFooter() {
   return (
-    <footer className="mx-auto mt-24 w-full max-w-[1440px] px-4 pb-6 md:px-[120px]">
+    <footer className="mx-auto mt-24 w-full max-w-[1440px] px-4 pb-6 md:px-10 xl:px-[120px]">
       <div className="bg-surface-card">
         <div className="grid grid-cols-1 gap-8 px-6 py-8 md:grid-cols-2 lg:grid-cols-4 lg:px-12">
           {highlights.map((item) => (

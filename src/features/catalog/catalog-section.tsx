@@ -45,7 +45,7 @@ export function CatalogSection({ search, onSearchChange }: CatalogSectionProps) 
     <section
       id="catalogo"
       aria-labelledby="catalog-title"
-      className="mx-auto grid max-w-[1440px] scroll-mt-4 grid-cols-1 gap-8 px-4 md:px-[120px] lg:grid-cols-[310px_1fr] lg:gap-12"
+      className="mx-auto grid max-w-[1440px] scroll-mt-4 grid-cols-1 gap-8 px-4 md:px-10 lg:grid-cols-[310px_1fr] lg:gap-12 xl:px-[120px]"
     >
       <h2 id="catalog-title" ref={headingRef} tabIndex={-1} className="sr-only">
         Catálogo de NFTs

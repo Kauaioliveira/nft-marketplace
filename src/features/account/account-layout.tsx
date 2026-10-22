@@ -32,7 +32,7 @@ export function AccountLayout({ title, children }: { title: string; children: Re
   const navigate = useNavigate()
 
   return (
-    <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-8 px-4 pt-8 md:px-[120px] lg:grid-cols-[310px_1fr]">
+    <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-8 px-4 pt-8 md:px-10 lg:grid-cols-[310px_1fr] xl:px-[120px]">
       <nav aria-label="Meu perfil" className="bg-surface-card self-start py-3">
         <p className="px-3 pb-2 text-xl font-bold">Meu perfil</p>
         <ul className="flex flex-wrap lg:flex-col">

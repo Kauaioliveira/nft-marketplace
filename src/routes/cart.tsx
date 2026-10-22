@@ -62,7 +62,7 @@ function CartPage() {
   const blocked = cart?.items.some((item) => item.quantity > item.available) ?? false
 
   return (
-    <div className="mx-auto max-w-[1440px] px-4 pt-8 md:px-[120px]">
+    <div className="mx-auto max-w-[1440px] px-4 pt-8 md:px-10 xl:px-[120px]">
       <nav aria-label="Trilha de navegação" className="mb-2 text-[15px] font-bold">
         <ol className="flex flex-wrap gap-2">
           <li>
@@ -219,7 +219,7 @@ function CartItems({ items }: { items: CartItem[] }) {
                   </div>
                 </div>
               </td>
-              <td className="text-accent-text text-[17px] font-bold">
+              <td className="text-accent-text text-[17px] font-bold whitespace-nowrap">
                 {formatEth(item.unitPriceEth)}
               </td>
               <td>
@@ -232,7 +232,10 @@ function CartItems({ items }: { items: CartItem[] }) {
                   onChange={(quantity) => update.mutate({ lineId: item.id, quantity })}
                 />
               </td>
-              <td className="text-brand text-[17px] font-bold" data-testid="line-total">
+              <td
+                className="text-brand text-[17px] font-bold whitespace-nowrap"
+                data-testid="line-total"
+              >
                 {formatEth(item.lineTotalEth)}
               </td>
               <td className="pr-4 text-right">

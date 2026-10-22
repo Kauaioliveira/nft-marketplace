@@ -60,7 +60,7 @@ function CheckoutPage() {
   const walletsResult = useQuery({ ...walletsQuery(user?.id ?? ''), enabled: Boolean(user) })
   if (!user || walletsResult.isPending) {
     return (
-      <div className="mx-auto max-w-[1440px] px-4 pt-8 md:px-[120px]">
+      <div className="mx-auto max-w-[1440px] px-4 pt-8 md:px-10 xl:px-[120px]">
         <SummarySkeleton />
       </div>
     )
@@ -122,7 +122,7 @@ function CheckoutForm({ user, wallets }: { user: User; wallets: Wallet[] | undef
   const empty = !cartPending && items.length === 0
 
   return (
-    <div className="mx-auto max-w-[1440px] px-4 pt-8 md:px-[120px]">
+    <div className="mx-auto max-w-[1440px] px-4 pt-8 md:px-10 xl:px-[120px]">
       <nav aria-label="Trilha de navegação" className="mb-6 text-[15px] font-bold">
         <ol className="flex flex-wrap gap-2">
           <li>

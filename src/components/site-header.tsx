@@ -22,14 +22,14 @@ export function SiteHeader() {
   const count = cart?.itemCount ?? 0
 
   return (
-    <header className="mx-auto w-full max-w-[1440px] px-4 md:px-[120px]">
+    <header className="mx-auto w-full max-w-[1440px] px-4 md:px-10 xl:px-[120px]">
       <div className="border-border flex h-[68px] items-center justify-between gap-6 border-b">
         <Link to="/" className="text-[15px] font-bold tracking-[0.06em] uppercase">
           Kurio
         </Link>
 
-        <nav aria-label="Principal" className="hidden lg:block">
-          <ul className="flex items-center gap-10">
+        <nav aria-label="Principal" className="hidden md:block">
+          <ul className="flex items-center gap-6 lg:gap-10">
             <li>
               <Link
                 to="/"

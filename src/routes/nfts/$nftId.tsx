@@ -33,7 +33,7 @@ function NftDetailPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[1440px] px-4 pt-8 md:px-[120px]">
+    <div className="mx-auto max-w-[1440px] px-4 pt-8 md:px-10 xl:px-[120px]">
       <nav aria-label="Trilha de navegação" className="mb-4 text-[15px] font-bold">
         <ol className="flex flex-wrap gap-2">
           <li>
