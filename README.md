@@ -13,11 +13,15 @@ Zod, big.js, Playwright.
 
 ## Como rodar
 
-Requisitos: Node 20+ e pnpm 10.
+Requisitos: **Node 22.19 ou mais recente** (desenvolvido com Node 24, versão em `.nvmrc`) e **pnpm 10**
+(fixado em `packageManager`). Versões mais antigas do Node não rodam o Vite 8, o ESLint 10 e o Lighthouse; o
+`.npmrc` faz a instalação falhar logo com uma mensagem clara nesse caso.
 
 ```bash
+nvm install && nvm use   # ou instale o Node 24 LTS pelo site oficial
+corepack enable          # ativa o pnpm na versão do packageManager
 pnpm install
-pnpm dev            # http://localhost:5173 com os mocks ativos
+pnpm dev                 # http://localhost:5173 com os mocks ativos
 ```
 
 | Comando | O que faz |
