@@ -1,4 +1,4 @@
-import { createFileRoute, Navigate, Outlet, redirect, useRouterState } from '@tanstack/react-router'
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 import { sessionQuery } from '@/api/session'
 import { useSession } from '@/features/session/use-session'
 
@@ -20,8 +20,9 @@ export const Route = createFileRoute('/_authenticated')({
 
 function AuthenticatedLayout() {
   const { user, isPending } = useSession()
-  const href = useRouterState({ select: (state) => state.location.href })
-  // Covers a session that ends while the page is open (logout in another tab, expiry).
-  if (!isPending && !user) return <Navigate to="/login" search={{ redirect: href }} replace />
+  // When the session ends while the page is open, private content disappears at once. The
+  // navigation itself belongs to whoever ended it (logout or SessionExpiryWatcher): two
+  // competing redirects here would chain `redirect=/login?redirect=...` endlessly.
+  if (!isPending && !user) return null
   return <Outlet />
 }
