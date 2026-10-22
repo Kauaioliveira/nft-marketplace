@@ -73,12 +73,16 @@ function FacetOption(props: {
   onToggle: () => void
 }) {
   const id = useId()
+  // An option that would return nothing with the other active filters cannot be picked,
+  // unless it is already selected (so it can still be cleared).
+  const disabled = props.count === 0 && !props.checked
   return (
     <label
       htmlFor={id}
       className={cn(
         'has-[:focus-visible]:outline-amber flex cursor-pointer items-center justify-between gap-3 rounded px-3 py-1.5 text-base has-[:focus-visible]:outline-2',
         props.checked ? 'text-brand' : 'text-sand hover:text-foreground',
+        disabled && 'hover:text-sand cursor-not-allowed opacity-50',
       )}
     >
       <span className="flex items-center gap-2">
@@ -86,6 +90,7 @@ function FacetOption(props: {
           id={id}
           type="checkbox"
           checked={props.checked}
+          disabled={disabled}
           onChange={props.onToggle}
           className="size-4 accent-[var(--color-brand)]"
         />
@@ -105,6 +110,8 @@ function PriceRange(props: {
   const [max, setMax] = useState(props.max ?? '')
   const [error, setError] = useState<string | null>(null)
   const errorId = useId()
+  const minId = useId()
+  const maxId = useId()
 
   // Keeps the inputs in sync when the URL changes through back/forward.
   const [synced, setSynced] = useState({ min: props.min, max: props.max })
@@ -137,11 +144,11 @@ function PriceRange(props: {
       <fieldset>
         <legend className="mb-3 text-lg font-bold">Faixa de preço</legend>
         <div className="flex items-center gap-2 px-3">
-          <label className="sr-only" htmlFor="price-min">
+          <label className="sr-only" htmlFor={minId}>
             Preço mínimo em ETH
           </label>
           <input
-            id="price-min"
+            id={minId}
             inputMode="decimal"
             placeholder="Mín."
             value={min}
@@ -151,11 +158,11 @@ function PriceRange(props: {
             className="border-input bg-ink w-full min-w-0 rounded-md border px-2 py-1.5 text-sm"
           />
           <span aria-hidden>–</span>
-          <label className="sr-only" htmlFor="price-max">
+          <label className="sr-only" htmlFor={maxId}>
             Preço máximo em ETH
           </label>
           <input
-            id="price-max"
+            id={maxId}
             inputMode="decimal"
             placeholder="Máx."
             value={max}

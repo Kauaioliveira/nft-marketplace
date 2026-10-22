@@ -134,6 +134,7 @@ export function CatalogSection({ search, onSearchChange }: CatalogSectionProps) 
 
         <CatalogResults
           query={query}
+          hasFilters={activeFilters > 0 || Boolean(search.q) || Boolean(search.tab)}
           favoriteIds={favoriteIds}
           onToggleFavorite={toggleFavorite}
           onClearFilters={() =>
@@ -166,6 +167,7 @@ function CatalogResults(props: {
   favoriteIds: Set<string>
   onToggleFavorite: (nftId: string, favorite: boolean) => void
   onClearFilters: () => void
+  hasFilters: boolean
 }) {
   const { query } = props
 
@@ -210,10 +212,21 @@ function CatalogResults(props: {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-sand text-sm" aria-live="polite">
-        {data.total} {data.total === 1 ? 'NFT encontrado' : 'NFTs encontrados'}
-        {query.isFetching && ' · atualizando…'}
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sand text-sm" aria-live="polite">
+          {data.total} {data.total === 1 ? 'NFT encontrado' : 'NFTs encontrados'}
+          {query.isFetching && ' · atualizando…'}
+        </p>
+        {props.hasFilters && (
+          <button
+            type="button"
+            onClick={props.onClearFilters}
+            className="text-brand text-sm underline-offset-4 hover:underline"
+          >
+            Limpar filtros
+          </button>
+        )}
+      </div>
       {query.isError && (
         <p role="alert" className="text-coral text-sm">
           Não foi possível atualizar a lista. Exibindo o último resultado.{' '}
