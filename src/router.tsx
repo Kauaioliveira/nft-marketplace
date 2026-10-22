@@ -10,7 +10,7 @@ export function createAppRouter(queryClient: QueryClient) {
     defaultPreload: 'intent',
     // Freshness is handled by TanStack Query, so the router always calls the loaders.
     defaultPreloadStaleTime: 0,
-    defaultNotFoundComponent: NotFound,
+    defaultNotFoundComponent: () => <NotFound />,
     scrollRestoration: true,
   })
 }
