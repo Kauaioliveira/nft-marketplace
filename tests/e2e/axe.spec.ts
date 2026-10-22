@@ -17,6 +17,9 @@ async function audit(page: Page, label: string) {
 }
 
 test.describe('auditoria automática de acessibilidade (axe)', () => {
+  // Four full-page audits per test take longer than the default timeout on the mobile profile.
+  test.describe.configure({ timeout: 90_000 })
+
   test('páginas públicas', async ({ page }) => {
     await start(page)
     await expect(page.getByTestId('nft-card')).toHaveCount(9)

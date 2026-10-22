@@ -68,8 +68,12 @@ test.describe('conta e sessão', () => {
     await page.getByLabel('Código de indicação').fill('AMIGO-10')
 
     await devCall(page, 'expire-sessions')
-    // The next authenticated request answers 401.
-    await page.getByRole('button', { name: 'Conectar MetaMask' }).click()
+    // The next authenticated request answers 401. A background refetch may get there before the
+    // click, so the click is best effort and the assertions below check the outcome.
+    await page
+      .getByRole('button', { name: 'Conectar MetaMask' })
+      .click({ timeout: 3_000 })
+      .catch(() => {})
     await expect(page).toHaveURL(/\/login\?.*reason=expired/)
     await expect(
       page.getByText('Sua sessão expirou. Entre novamente para continuar de onde parou.'),

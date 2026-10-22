@@ -8,6 +8,7 @@ export const bruno = { email: 'bruno@example.com', password: 'Senha123!', name: 
  * skip the Service Worker, so they would never reach MSW.
  */
 export async function devCall(page: Page, path: string, body?: unknown) {
+  await expect(page.locator('html')).toHaveAttribute('data-mocks-ready', 'true')
   const status = await page.evaluate(
     async ({ path, body }) => {
       const response = await fetch(`/api/__dev/${path}`, {
@@ -27,6 +28,8 @@ export async function start(page: Page, scenario = 'default', path = '/') {
   const separator = path.includes('?') ? '&' : '?'
   await page.goto(`${path}${separator}scenario=${scenario}`)
   await expect(page.getByRole('link', { name: 'Kurio' })).toBeVisible()
+  // The UI paints before the mock worker is active; mock calls must wait for it.
+  await expect(page.locator('html')).toHaveAttribute('data-mocks-ready', 'true')
 }
 
 export async function login(page: Page, user = ana) {
@@ -60,6 +63,7 @@ export async function armFailure(page: Page, method: string, path: string, statu
 }
 
 export async function mockStats(page: Page) {
+  await expect(page.locator('html')).toHaveAttribute('data-mocks-ready', 'true')
   return page.evaluate(async () => {
     const response = await fetch('/api/__dev/stats')
     return (await response.json()) as { orders: number }
