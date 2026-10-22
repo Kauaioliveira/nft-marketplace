@@ -1,9 +1,37 @@
 # Kurio — Marketplace de NFTs
 
+[![CI](https://github.com/Kauaioliveira/nft-marketplace/actions/workflows/ci.yml/badge.svg)](https://github.com/Kauaioliveira/nft-marketplace/actions/workflows/ci.yml)
+
 Marketplace de NFTs em React + TypeScript com descoberta, compra e conta do colecionador.
 Toda a API (REST e Socket.IO) é simulada com MSW na camada de rede, inclusive no build publicado.
 
+**App publicado:** https://nft-marketplace-rho-weld.vercel.app
+
 Decisões, contratos REST, eventos e políticas de cache estão em [`ARCHITECTURE.md`](./ARCHITECTURE.md).
+
+## Como avaliar em 5 minutos
+
+Tudo abaixo funciona direto no app publicado, sem instalar nada.
+
+1. **Compra completa.** Entre com `ana@example.com` / `Senha123!`, escolha um NFT, uma edição e a
+   quantidade, vá ao carrinho (teste o cupom `KURIO10`) e em "Conectar e finalizar" conecte a MetaMask
+   simulada, revise e confirme. O pedido fica pendente e é confirmado pelo evento `order.updated` (Socket.IO);
+   o recibo vem do snapshot do pedido.
+2. **Falhas.** O botão **Cenários** (canto inferior direito) escolhe um cenário e restaura os dados. Repita a
+   compra em cada um:
+   - `payment-declined`: o pagamento é recusado e os itens continuam no carrinho;
+   - `order-timeout`: a primeira resposta se perde; "Tentar novamente" recupera **o mesmo pedido** pela
+     `Idempotency-Key`, sem compra duplicada;
+   - `price-change`: o preço muda via `nft.updated` com a revisão aberta, e a confirmação fica bloqueada até
+     atualizar a cotação;
+   - `session-expired`: a sessão dura 30 s; ao expirar no checkout, o login volta para o mesmo ponto com o
+     formulário preservado.
+3. **Catálogo.** Combine busca, coleções, rede e faixa de preço, troque a ordenação e a página, depois use
+   voltar/avançar e o refresh: o estado fica na URL. O cenário `slow` mostra os skeletons; `flaky` e
+   `offline`, os estados de erro com nova tentativa.
+4. **Onde olhar no código.** [`ARCHITECTURE.md`](./ARCHITECTURE.md) (decisões e contratos),
+   `tests/e2e/` (fluxos e falhas em desktop e mobile), [`lighthouse/summary.md`](./lighthouse/summary.md)
+   (auditoria) e `src/mocks/` (API simulada, cenários e servidor Socket.IO).
 
 ## Stack
 
@@ -123,6 +151,10 @@ Relatório HTML em `playwright-report/` e traces das falhas em `test-results/`.
 | `accessibility.spec.ts` | teclado, foco em diálogos, erros associados aos campos, skeletons, erro e nova tentativa, rolagem horizontal |
 | `axe.spec.ts` | auditoria axe (WCAG 2.1 AA) das telas públicas e privadas |
 | `visual.spec.ts` | regressão visual de início, detalhe, carrinho e pagamento (baselines em `visual.spec.ts-snapshots/`) |
+
+O GitHub Actions (`.github/workflows/ci.yml`) roda typecheck, lint, build e toda a suíte E2E a cada push.
+A regressão visual fica de fora no CI porque as baselines foram geradas no Windows e a renderização de fontes
+muda no Linux; ela roda localmente com `pnpm test:e2e`.
 
 ## Lighthouse
 
